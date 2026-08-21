@@ -15,7 +15,7 @@ var lookup = map[string]func(){
 func main() {
 	var input string
 
-	while true {
+	for true {
 		fmt.Print("$ ")
 		fmt.Scanln(&input)
 
