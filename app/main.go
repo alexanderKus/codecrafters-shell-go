@@ -22,7 +22,7 @@ func main() {
 	if ok {
 		fn()
 	} else {
-		msg := fmt.Sprintf("{%v}: command not found", input)
+		msg := fmt.Sprintf("%v: command not found", input)
 		fmt.Println(msg)
 	}
 }
