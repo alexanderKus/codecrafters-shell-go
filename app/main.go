@@ -15,14 +15,16 @@ var lookup = map[string]func(){
 func main() {
 	var input string
 
-	fmt.Print("$ ")
-	fmt.Scanln(&input)
+	while true {
+		fmt.Print("$ ")
+		fmt.Scanln(&input)
 
-	fn, ok := lookup[input]; 
-	if ok {
-		fn()
-	} else {
-		msg := fmt.Sprintf("%v: command not found", input)
-		fmt.Println(msg)
+		fn, ok := lookup[input]; 
+		if ok {
+			fn()
+		} else {
+			msg := fmt.Sprintf("%v: command not found", input)
+			fmt.Println(msg)
+		}
 	}
 }
