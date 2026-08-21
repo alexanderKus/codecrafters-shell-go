@@ -5,20 +5,33 @@ import (
 	"fmt"
 	"os"
 	"bufio"
+	"slices"
 )
 
-func echo(args ...string) {
-	fmt.Println(strings.Join(args, " "))
-}
 
 
 var run = true
+var builtin = []string{"echo", "exit", "type"}
 var lookup = map[string]func(args ...string){
-	"echo": echo,
+	"echo": echoFn,
 	"exit": func(args ...string) {
 		run = false
 	},
+	"type": typeFn,
 }
+
+func echoFn(args ...string) {
+	fmt.Println(strings.Join(args, " "))
+}
+
+func typeFn(args ...string) {
+	if slices.Contains(builtin, args[0]) {
+		fmt.Println(args[0], "is a shell builtin")
+	} else {
+		fmt.Println(args[0], "not found")
+	}
+}
+
 
 func main() {
 	var input string
