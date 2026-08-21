@@ -8,14 +8,18 @@ func echo() {
 	fmt.Println("echo")
 }
 
+var run = true
 var lookup = map[string]func(){
 	"echo": echo,
+	"exit": func() {
+		run = false
+	},
 }
 
 func main() {
 	var input string
 
-	for true {
+	for run {
 		fmt.Print("$ ")
 		fmt.Scanln(&input)
 
