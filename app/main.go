@@ -8,8 +8,6 @@ import (
 	"slices"
 )
 
-
-
 var run = true
 var builtin = []string{"echo", "exit", "type"}
 var lookup = map[string]func(args ...string){
