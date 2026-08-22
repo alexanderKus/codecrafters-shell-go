@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -29,32 +30,55 @@ func typeFn(args ...string) {
 	if slices.Contains(builtin, args[0]) {
 		fmt.Println(args[0], "is a shell builtin")
 	} else {
-		tryToExec(args...)
+		handleNonBuiltin(args...)
 	}
+}
+
+func handleNonBuiltin(args ...string) {
+	commandInput := args[0]
+	path, exists := doesCommandExist(commandInput)
+	var msg string
+	if exists {
+		msg = fmt.Sprintf("%v is %v", commandInput, path)
+	} else {
+		msg = fmt.Sprintf("%v: not found", commandInput)
+	}
+	fmt.Println(msg)
 }
 
 func tryToExec(input ...string) {
 	commandInput := input[0]
-	//args := input[1:]
-	commandFound, err := getExec(commandInput)
-	if err != nil {
+	path, exists := doesCommandExist(commandInput)
+	if exists {
+		cmd := exec.Command(path, input[1:]...)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		err := cmd.Run()
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else {
 		msg := fmt.Sprintf("%v: not found", commandInput)
 		fmt.Println(msg)
-		return
+	}
+}
+
+func doesCommandExist(command string) (path string, exists bool) {
+	commandFound, err := getExec(command)
+	if err != nil {
+		return "", false
 	}
 
 	hasPerms, err := hasPermissions(commandFound)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return "", false
 	}
 
 	if !hasPerms {
-		return
+		return "", false
 	}
 
-	msg := fmt.Sprintf("%v is %v", commandInput, commandFound)
-	fmt.Println(msg)
+	return commandFound, true
 }
 
 func hasPermissions(path string) (hasPerms bool, err error) {
@@ -108,8 +132,9 @@ func main() {
 		if ok {
 			fn(args...)
 		} else {
-			msg := fmt.Sprintf("%v: command not found", input)
-      fmt.Println(msg)
+			tryToExec(parts...)
+			//msg := fmt.Sprintf("%v: not found", input)
+      //fmt.Println(msg)
 		}
 	}
 }
