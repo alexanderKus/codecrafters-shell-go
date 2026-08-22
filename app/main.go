@@ -13,7 +13,7 @@ import (
 var PATH = os.Getenv("PATH")
 var run = true
 
-var builtin = []string{"echo", "exit", "type"}
+var builtin = []string{"echo", "pwd", "exit", "type"}
 var builtInLookup = map[string]func(args ...string){
 	"echo": echoFn,
 	"pwd": pwdFn,
