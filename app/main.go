@@ -11,15 +11,16 @@ import (
 )
 
 var PATH = os.Getenv("PATH")
+var HOME = os.Getenv("HOME")
+var pwd, _ = os.Getwd()
 var run = true
 
-var builtin = []string{"echo", "pwd", "exit", "type"}
+var builtin = []string{"echo", "exit", "pwd", "cd", "type"}
 var builtInLookup = map[string]func(args ...string){
 	"echo": echoFn,
+	"exit": exitFn,
 	"pwd": pwdFn,
-	"exit": func(args ...string) {
-		run = false
-	},
+	"cd": cdFn,
 	"type": typeFn,
 }
 
@@ -27,15 +28,30 @@ func echoFn(args ...string) {
   fmt.Println(strings.Join(args, " "))
 }
 
-func pwdFn(args ...string) {
-	dir, err := os.Getwd()
-	if err != nil {
-		fmt.Println("Error getting current directory:", err)
-		return
-	}
-	fmt.Println(dir)
+func exitFn(args ...string) {
+	run = false
 }
 
+func pwdFn(args ...string) {
+	fmt.Println(pwd)
+}
+
+func cdFn(args ...string) {
+	_exists := func(path string) bool {
+		info, err := os.Stat(path)
+		return err == nil && info.IsDir()
+	}
+
+	commandInput := args[0]
+	if !_exists(commandInput) {
+		msg := fmt.Sprintf("cd: %s: No such file or directory", commandInput)
+		fmt.Println(msg)
+		return
+	}
+	if strings.HasPrefix(commandInput, "/") {
+		pwd = commandInput
+	}
+}
 
 func typeFn(args ...string) {
 	if slices.Contains(builtin, args[0]) {
