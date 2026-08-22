@@ -78,14 +78,10 @@ func getExec(command string) (commandPath string, err error) {
 }
 
 func getExecFromPath(path string, command string) (outputPath string, err error) {
-	if _, err := os.Stat(path); err == nil {
-		if entries, err2 := os.ReadDir(path); err2 == nil {
-			for _, entry := range entries {
-				if entry.Name() == command {
-					return filepath.Join(path, command), nil
-				}
-			}
-		} 
+	commandPath := filepath.Join(path, command)
+	info, err := os.Stat(commandPath)
+	if err == nil && !info.IsDir() && info.Mode().Perm()&0111 != 0 {
+		return commandPath, nil
 	}
 	return "", fmt.Errorf("command not found")
 }
