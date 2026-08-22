@@ -1,12 +1,12 @@
 package main
 
 import (
-	"strings"
+	"bufio"
 	"fmt"
 	"os"
-	"bufio"
-	"slices"
 	"path/filepath"
+	"slices"
+	"strings"
 )
 
 var PATH = os.Getenv("PATH")
@@ -69,6 +69,7 @@ func hasPermissions(path string) (hasPerms bool, err error) {
 func getExec(command string) (commandPath string, err error) {
 	paths := strings.Split(PATH, ":")
 	for _, path := range paths {
+		//fmt.Printf("Searching through %s\n", path)
 		if exec, err := getExecFromPath(path, command); err == nil {
 			return exec, nil
 		}
