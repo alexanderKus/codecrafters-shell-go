@@ -29,7 +29,7 @@ func typeFn(args ...string) {
 	if slices.Contains(builtin, args[0]) {
 		fmt.Println(args[0], "is a shell builtin")
 	} else {
-		fmt.Println(args[0], "not found")
+		tryToExec(args...)
 	}
 }
 
@@ -111,7 +111,8 @@ func main() {
 		if ok {
 			fn(args...)
 		} else {
-			tryToExec(parts...)
+			msg := fmt.Sprintf("%v: command not found", input)
+      fmt.Println(msg)
 		}
 	}
 }
