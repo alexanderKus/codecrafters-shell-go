@@ -38,7 +38,7 @@ func tryToExec(input ...string) {
 	//args := input[1:]
 	commandFound, err := getExec(commandInput)
 	if err != nil {
-		msg := fmt.Sprintf("%v: command not found", commandInput)
+		msg := fmt.Sprintf("%v: not found", commandInput)
 		fmt.Println(msg)
 		return
 	}
