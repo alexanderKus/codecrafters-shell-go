@@ -5,11 +5,33 @@ import (
 	"fmt"
 	"os"
 	"bufio"
+	"slices"
 	"path/filepath"
 )
 
 var PATH = os.Getenv("PATH")
 var run = true
+
+var builtin = []string{"echo", "exit", "type"}
+var builtInLookup = map[string]func(args ...string){
+	"echo": echoFn,
+	"exit": func(args ...string) {
+		run = false
+	},
+	"type": typeFn,
+}
+
+func echoFn(args ...string) {
+  fmt.Println(strings.Join(args, " "))
+}
+
+func typeFn(args ...string) {
+	if slices.Contains(builtin, args[0]) {
+		fmt.Println(args[0], "is a shell builtin")
+	} else {
+		fmt.Println(args[0], "not found")
+	}
+}
 
 func tryToExec(input ...string) {
 	commandInput := input[0]
@@ -77,11 +99,19 @@ func main() {
 
 		if !scanner.Scan() {
 			break
-    }
+		}
 
 		input = scanner.Text()
 		parts := strings.Fields(input)
 
-		tryToExec(parts...)
+		command := parts[0]
+		args := parts[1:]
+
+		fn, ok := builtInLookup[command];
+		if ok {
+			fn(args...)
+		} else {
+			tryToExec(parts...)
+		}
 	}
 }
