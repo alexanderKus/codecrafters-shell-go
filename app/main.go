@@ -16,6 +16,7 @@ var run = true
 var builtin = []string{"echo", "exit", "type"}
 var builtInLookup = map[string]func(args ...string){
 	"echo": echoFn,
+	"pwd": pwdFn,
 	"exit": func(args ...string) {
 		run = false
 	},
@@ -25,6 +26,16 @@ var builtInLookup = map[string]func(args ...string){
 func echoFn(args ...string) {
   fmt.Println(strings.Join(args, " "))
 }
+
+func pwdFn(args ...string) {
+	dir, err := os.Getwd()
+	if err != nil {
+		fmt.Println("Error getting current directory:", err)
+		return
+	}
+	fmt.Println(dir)
+}
+
 
 func typeFn(args ...string) {
 	if slices.Contains(builtin, args[0]) {
