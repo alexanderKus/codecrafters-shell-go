@@ -51,6 +51,7 @@ func tryToExec(input ...string) {
 	path, exists := doesCommandExist(commandInput)
 	if exists {
 		cmd := exec.Command(path, input[1:]...)
+		cmd.Args[0] = commandInput
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		err := cmd.Run()
@@ -58,7 +59,7 @@ func tryToExec(input ...string) {
 			fmt.Println(err)
 		}
 	} else {
-		msg := fmt.Sprintf("%v: not found", commandInput)
+		msg := fmt.Sprintf("%v: command not found", commandInput)
 		fmt.Println(msg)
 	}
 }
