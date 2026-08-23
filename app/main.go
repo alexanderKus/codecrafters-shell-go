@@ -50,9 +50,29 @@ func cdFn(args ...string) {
 	}
 	if strings.HasPrefix(commandInput, "/") {
 		pwd = commandInput
-	} else {
-		pwd = filepath.Join(pwd, commandInput)
+	} else if strings.HasPrefix(commandInput, "./") {
+		temp := filepath.Join(pwd, commandInput[2:])
+		if _exists(temp) {
+			pwd = temp
+		} else {
+			msg := fmt.Sprintf("cd: %s: No such file or directory", commandInput)
+			fmt.Println(msg)
+			return
+		}
+	} else if strings.HasPrefix(commandInput, "..") { 
+		parts :=strings.Split(pwd, "/")
+		len := len(parts)
+		parent := strings.Join(parts[:len], "/")
+		temp := filepath.Join(parent, commandInput[:])
+		if _exists(temp) {
+			pwd = temp
+		} else {
+			msg := fmt.Sprintf("cd: %s: No such file or directory", commandInput)
+			fmt.Println(msg)
+			return
+		}
 	}
+
 }
 
 func typeFn(args ...string) {
