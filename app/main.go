@@ -48,9 +48,12 @@ func cdFn(args ...string) {
 		fmt.Println(msg)
 		return
 	}
-	if strings.HasPrefix(commandInput, "/") {
-		pwd = commandInput
-	}
+	pwd = filepath.Join(pwd, commandInput)
+	// if strings.HasPrefix(commandInput, "/") {
+	// 	pwd = commandInput
+	// } else if strings.HasPrefix(commandInput, ".") {
+	// 	pwd = filepath.Join(pwd, commandInput)
+	// }
 }
 
 func typeFn(args ...string) {
